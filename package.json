@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "shadow-cljs": "^2.15.13"
+  },
+  "dependencies": {
+    "match-sorter": "^6.3.1",
+    "react": "^17.0.2",
+    "react-contenteditable": "^3.3.6",
+    "react-dom": "^17.0.2"
+  }
+}
