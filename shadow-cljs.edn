@@ -1,12 +1,18 @@
 {:source-paths ["src"]
- :dependencies [[binaryage/devtools "1.0.3"]
+ :dependencies [[binaryage/devtools "1.0.6"]
                 [nrepl "0.8.3"]
-                [reagent "1.1.1"]]
- :builds       {:app {:target     :browser
-                      :output-dir "public/js"
-                      :asset-path "/js"
-                      :modules    {:app {:entries [notion-clone.core]}}
-                      :devtools   {:after-load notion-clone.core/mount-root}}}
+                [reagent "1.1.1"]
+                [re-frame "1.3.0-rc3"]]
+ :builds       {:app
+                {:target     :browser
+                 :output-dir "public/js"
+                 :asset-path "/js"
+                 :modules    {:app
+                              {:entries [notion-clone.core]}}
+                 :devtools   {:after-load notion-clone.core/init!}
+                 :dev        {:compiler-options
+                              {:closure-defines { }}}}}
 
  :dev-http     {3000 {:root    "public"
                       :handler user/app}}}
+

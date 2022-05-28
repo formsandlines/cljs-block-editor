@@ -1,5 +1,3 @@
-My attempt to translate the tutorial [“How To Build A Text Editor Like Notion”](https://medium.com/swlh/how-to-build-a-text-editor-like-notion-c510aedfdfcc) by konstantinmuenster to ClojureScript using Reagent to learn more about interop and differences from pure React.
+To gain some experience with [re-frame](https://github.com/day8/re-frame), I adapt my [old repo](https://github.com/formsandlines/notion-clone-tut-in-cljs) to use re-frame for de-complected state management instead of pure Reagent r/atoms.
 
-For now this is just the code, but I may put it together with the actual tutorial text (which would have to be adapted as well) if people are interested and I get permission from the author.
-
-I might also try to port his [full stack Notion Clone](https://github.com/konstantinmuenster/notion-clone) to CLJ/CLJS in the future, when I learn how to do this backend stuff in Clojure.
+My original repo was based on the tutorial [“How To Build A Text Editor Like Notion”](https://medium.com/swlh/how-to-build-a-text-editor-like-notion-c510aedfdfcc) by konstantinmuenster, but I will make more drastic changes to the code structure and maybe add new features.
