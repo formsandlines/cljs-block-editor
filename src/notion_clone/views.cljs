@@ -1,14 +1,15 @@
-(ns notion-clone.editable
+(ns notion-clone.views
   (:require
-   [reagent.core :as r]
-   [react :as react]
-   [notion-clone.utils :refer [set-caret-to-end get-caret-coordinates]]
-   ["react-contenteditable$default" :as ContentEditable]
-   [notion-clone.select-menu :refer [select-menu]]))
+    [reagent.core :as r]
+    [re-frame.core :as rf]
+    [react :as react]
+    [notion-clone.utils :refer [set-caret-to-end get-caret-coordinates]]
+    ["react-contenteditable$default" :as ContentEditable]
+    [notion-clone.select-menu :refer [select-menu]]))
 
 
 (defn editable-block
-  [{:keys [id html tag update-page! add-block! delete-block!]}]
+  [{:keys [id html tag]}]
   (let [*state (r/atom {:html-backup nil :html html :tag tag
                         :prev-key ""
                         :select-menu-is-open false
@@ -28,13 +29,15 @@
               "Enter"
               (when (not= prev-key "Shift")
                 (.preventDefault e)
-                (add-block! {:id id
-                             :!ref (.-current contentEditable)}))
+                (rf/dispatch [:blocks/add
+                              {:id id
+                               :!ref (.-current contentEditable)}]))
               "Backspace"
               (when (empty? html)
                 (.preventDefault e)
-                (delete-block! {:id id
-                                :!ref (.-current contentEditable)}))
+                (rf/dispatch [:blocks/delete
+                              {:id id
+                               :!ref (.-current contentEditable)}]))
               nil)
             (update-state! :prev-key k)))
 
@@ -71,7 +74,8 @@
        :component-did-update
        (fn []
          (let [{:keys [html tag]} @*state]
-           (update-page! {:id id :html html :tag tag})))
+           (rf/dispatch [:blocks/update
+                         {:id id :html html :tag tag}])))
 
        :reagent-render
        (fn []
@@ -93,35 +97,9 @@
               :on-key-down on-key-down-handler
               :on-key-up on-key-up-handler}]]))})))
 
-(defn editable-page [initial-blocks]
-  (let [*blocks (r/atom initial-blocks)
 
-        update-page-handler
-        (fn [{:keys [id] :as local-data}]
-          (let [i (.indexOf (mapv :id @*blocks) id)
-                block (@*blocks i)
-                updated-block (merge block local-data)]
-            ;; updates only if block-state differs with new data
-            (when-not (= block updated-block)
-              (swap! *blocks assoc i updated-block))))
-
-        add-block-handler
-        (fn [{:keys [id !ref]}]
-          (let [new-block {:id (random-uuid) :html "" :tag "p"}
-                i (inc (.indexOf (mapv :id @*blocks) id))]
-            (swap! *blocks #(into (subvec % 0 i)
-                                  (cons new-block (subvec % i))))
-            (r/after-render #(.. !ref -nextElementSibling focus))))
-
-        delete-block-handler
-        (fn [{:keys [id !ref]}]
-          (when-let [previous-block (.. !ref -previousElementSibling)]
-            (let [i (.indexOf (mapv :id @*blocks) id)]
-              (swap! *blocks #(into (subvec % 0 i)
-                                    (subvec % (inc i))))
-              (r/after-render #(do (set-caret-to-end previous-block)
-                                   (.focus previous-block))))))]
-
+(defn editable-page []
+  (let [*blocks (rf/subscribe [:blocks])]
     (fn []
       [:div.Page
        (for [{:keys [id html tag]} @*blocks]
@@ -129,8 +107,19 @@
          [editable-block
           {:id id
            :tag tag
-           :html html
-           :update-page! update-page-handler
-           :add-block! add-block-handler
-           :delete-block! delete-block-handler}])])))
+           :html html}])])))
+
+
+(defn root []
+  [:<>
+   [:h1.Logo
+    "notion.clone in Reagent & re-frame"]
+   [:p.Intro
+    "Hello "
+    [:span.Emoji {:role "img" :aria-label "greetings"} "👋"]
+    " You can add content below. Type "
+    [:span.Code "/"]
+    " to see available elements."]
+   [editable-page]])
+
 
