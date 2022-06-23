@@ -3,8 +3,7 @@ body {
   margin: 0 auto;
   width: 100%;
   max-width: 40rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .Logo {
@@ -35,17 +34,29 @@ body {
 /* EDITABLE BLOCK*/
 
 .Block {
-  margin: 0.25rem 0;
-  padding: 0.5rem;
-  background: #fafafa;
-  border-radius: 0.25rem;
+  line-height: 1.3em;
+  margin: 0.5rem 0;
 }
-.Block:hover {
-  background: #f8f8f8;
-  outline-color: #f5f6fb;
+
+.Block:focus-visible {
+  outline-color: rgba(150,150,255,0.5);
 }
-.Block:focus {
-  background: #f5f6fb;
+
+h1.Block {
+  line-height: 0.95em;
+  margin: 2rem 0;
+}
+h2.Block {
+  line-height: 1.0em;
+  margin: 1.5rem 0;
+}
+h3.Block {
+  line-height: 1.2em;
+  margin: 1.25rem 0;
+}
+
+.Block.editing {
+  background-color: #ffeeee;
 }
 
 /* SELECT MENU */
