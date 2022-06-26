@@ -54,6 +54,8 @@
           new-block (merge {:uid (random-uuid) :html "" :tag "p"}
                            local-data)
           i (inc (.indexOf (mapv :uid blocks) prev-uid))]
+      ;; ! there is some weird splitting behaviour if
+      ;;   empty lines are present in multi-line blocks
       {:db (update db :blocks #(into (subvec % 0 i)
                                      (cons new-block (subvec % i))))
        :focus-next! !ref})))
@@ -71,9 +73,10 @@
               prev-html-merged (str prev-html
                                     (utils/remove-zero-width-char
                                       (.. !ref -innerHTML)))]
-          ; (js/console.log (str "prev: '" (-> prev-html utils/html->text) "'"))
           {:db (update db :blocks #(into (subvec % 0 i)
                                          (subvec % (inc i))))
+           ;; ! there is some weird joining behaviour if
+           ;;   empty lines are present in multi-line blocks
            :fx [[:dispatch [:blocks/update
                             {:uid prev-uid :html prev-html-merged}]]
                 [:set-caret-to! [prev-elem (-> prev-html
@@ -88,7 +91,7 @@
       (when-let [{:keys [y1 y2]} (utils/get-elem-bounds adjacent-elem)]
         {:fx [[:set-caret-from-coords!
                [caret-x (case dir
-                          :prev (- y2 4) ; 10 10, 4 4
+                          :prev (- y2 4)
                           :next (+ y1 4))]]]}))))
 
 (rf/reg-event-db

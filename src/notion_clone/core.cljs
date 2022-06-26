@@ -5,20 +5,15 @@
     [notion-clone.events :as events]
     [notion-clone.subs :as subs]
     [notion-clone.effects :as effects]
-    [notion-clone.views :as views]))
+    [notion-clone.views :refer [root-el]]))
 
 
 (defn ^:dev/after-load mount-root []
   (rf/clear-subscription-cache!)
-  (d/render [views/root]
+  (d/render [root-el]
             (.getElementById js/document "app")))
 
 (defn ^:export init! []
   (rf/dispatch-sync [:initialize-db])
   (mount-root))
 
-
-(comment
-
- 
-  ,)

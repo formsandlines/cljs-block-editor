@@ -17,14 +17,10 @@
                                   (.. elem -innerText))))
                 :start ; if elem.childNodes[0] is null (no text)
                 pos)]
-      (js/setTimeout #(utils/set-caret-to elem pos) 100)
-      ; (r/after-render #(utils/set-caret-to elem pos))
-      )))
+      (js/setTimeout #(utils/set-caret-to elem pos) 100))))
 
 (rf/reg-fx
   :set-caret-from-coords!
   (fn [[x y]]
-    (js/setTimeout #(utils/set-caret-from-coords x y) 50)
-    ; (r/after-render #(utils/set-caret-from-coords x y))
-    ))
+    (js/setTimeout #(utils/set-caret-from-coords x y) 50)))
 

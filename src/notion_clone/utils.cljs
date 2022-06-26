@@ -43,9 +43,6 @@
                                            :next-sum next-sum}))
                       :else (recur r (+ next-sum 4))))
                   (recur r char-sum))))]
-        ; (js/console.log el)
-        ; (println "pos: " pos "nth-pos: " nth-pos
-        ;          ", Text node: " (.-textContent nth-node))
         (.setStart rng nth-node nth-pos)
         (.setEnd   rng nth-node nth-pos)))
     (.removeAllRanges sel)
@@ -80,8 +77,6 @@
                           3 (.. node -length) ; text node
                           1 4 ; <br>
                           0)]
-         ; (println "chars "char-count)
-         ; (println (.. node -nodeType))
          (recur r (+ offset char-count)))))))
 
 (defn- correct-sel-offset
@@ -106,11 +101,8 @@
   (let [sel (.getSelection js/window)
         anchorNode (.. sel -anchorNode)
         focusNode  (.. sel -focusNode)
-        ; _ (js/console.log anchorNode)
-        ; _ (js/console.log focusNode)
         sel-start  (correct-sel-offset anchorNode (.. sel -anchorOffset))
         sel-end    (correct-sel-offset focusNode (.. sel -focusOffset))
-        ; _ (println sel-start "-" sel-end)
         line-nodes (.. sel -baseNode -parentNode -childNodes)
         pos-start  (if (text-node? anchorNode)
                      (calc-line-offset line-nodes anchorNode sel-start)
@@ -118,7 +110,6 @@
         pos-end    (if (text-node? focusNode)
                      (calc-line-offset line-nodes focusNode sel-end)
                      sel-end)]
-    ; (js/console.log line-nodes)
     {:sel-start sel-start
      :sel-end   sel-end
      :pos-start pos-start
@@ -159,6 +150,4 @@
     (.. js-str (split "​") (join ""))
     js-str))
 
-(comment
-  
-  )
+
