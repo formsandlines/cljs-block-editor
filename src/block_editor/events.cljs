@@ -1,8 +1,8 @@
-(ns notion-clone.events
+(ns block-editor.events
   (:require
     ; [reagent.core :as r]
     [re-frame.core :as rf]
-    [notion-clone.utils :as utils]))
+    [block-editor.utils :as utils]))
 
 ;; ---- Interceptors --------------------------------------------
 

@@ -1,11 +1,11 @@
-(ns notion-clone.views
+(ns block-editor.views
   (:require
     [reagent.core :as r]
     [re-frame.core :as rf]
     [react :as react]
-    [notion-clone.utils :as utils]
+    [block-editor.utils :as utils]
     ["react-contenteditable$default" :as ContentEditable]
-    [notion-clone.select-menu :refer [select-menu-el]]))
+    [block-editor.select-menu :refer [select-menu-el]]))
 
 
 (defn block-blur
@@ -165,11 +165,8 @@
 (defn root-el []
   [:<>
    [:h1.Logo
-    "notion.clone in Reagent & re-frame"]
+    "Block-based RTE"]
    [:p.Intro
-    "Hello "
-    [:span.Emoji {:role "img" :aria-label "greetings"} "👋"]
-    " You can add content below. Type "
     [:span.Code "/"]
     " to see available elements."]
    [block-page-el]])

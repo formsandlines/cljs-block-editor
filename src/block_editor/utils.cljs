@@ -1,4 +1,4 @@
-(ns notion-clone.utils
+(ns block-editor.utils
   (:require [clojure.string :as string]))
 
 

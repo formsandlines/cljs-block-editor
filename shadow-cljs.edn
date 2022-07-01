@@ -8,8 +8,8 @@
                  :output-dir "public/js"
                  :asset-path "/js"
                  :modules    {:app
-                              {:entries [notion-clone.core]}}
-                 :devtools   {:after-load notion-clone.core/init!}
+                              {:entries [block-editor.core]}}
+                 :devtools   {:after-load block-editor.core/init!}
                  :dev        {:compiler-options
                               {:closure-defines { }}}}}
 

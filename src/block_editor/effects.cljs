@@ -1,8 +1,8 @@
-(ns notion-clone.effects
+(ns block-editor.effects
   (:require
     [reagent.core :as r]
     [re-frame.core :as rf]
-    [notion-clone.utils :as utils]))
+    [block-editor.utils :as utils]))
 
 
 (rf/reg-fx

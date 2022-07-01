@@ -1,4 +1,4 @@
-(ns notion-clone.select-menu
+(ns block-editor.select-menu
   (:require 
     [reagent.core :as r]
     ["match-sorter" :refer (matchSorter)]))

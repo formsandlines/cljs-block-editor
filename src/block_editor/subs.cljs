@@ -1,4 +1,4 @@
-(ns notion-clone.subs
+(ns block-editor.subs
   (:require
     ; [reagent.core :as r]
     [re-frame.core :as rf]))

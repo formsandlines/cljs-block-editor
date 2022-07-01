@@ -1,11 +1,11 @@
-(ns notion-clone.core
+(ns block-editor.core
   (:require
     [reagent.dom :as d]
     [re-frame.core :as rf]
-    [notion-clone.events :as events]
-    [notion-clone.subs :as subs]
-    [notion-clone.effects :as effects]
-    [notion-clone.views :refer [root-el]]))
+    [block-editor.events :as events]
+    [block-editor.subs :as subs]
+    [block-editor.effects :as effects]
+    [block-editor.views :refer [root-el]]))
 
 
 (defn ^:dev/after-load mount-root []
