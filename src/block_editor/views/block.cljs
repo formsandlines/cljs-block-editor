@@ -4,7 +4,8 @@
     [re-frame.core :as rf]
     [react :as react]
     [block-editor.utils :as utils]
-    ["react-contenteditable$default" :as ContentEditable]
+    [block-editor.views.editable :refer [editable-el]]
+    ; ["react-contenteditable$default" :as ContentEditable]
     [block-editor.views.select-menu :refer [select-menu-el]]))
 
 
@@ -16,20 +17,23 @@
     (rf/dispatch [:editing/uid nil])))
 
 (defn block-change
-  [e _ *state !ref]
-  (let [v (.. e -target -value)
+  [e _ *state elem]
+  ; (js/console.log (.. e -target))
+  (let [v (.. e -target -innerHTML)
         ; removes zero-width-char (from empty text node fix):
         html-local (utils/remove-zero-width-char v)]
     (swap! *state assoc :html-local html-local)
     (when (not= v html-local)
       ;; fixes caret position after zero-width-char removal:
-      (r/after-render #(utils/set-caret-to (.-current !ref) :end)))))
+      (r/after-render #(utils/set-caret-to elem :end)))
+    ))
 
 (defn block-keydown
-  [e uid *state !ref]
+  [e uid *state el]
   (let [{:keys [html-local]} @*state
         k    (.-key e)
-        elem (.-target e)]
+        elem el ; ? remove  elem (.-target e)
+        ]
     (case k
       "/" (swap! *state assoc :html-backup html-local)
 
@@ -43,7 +47,7 @@
           (rf/dispatch [:blocks/add
                         {:prev-uid uid
                          :local-data {:html html-brk}
-                         :!ref (.-current !ref)}])))
+                         :elem el}])))
 
       "Backspace"
       (when (or (== 0 (count html-local))
@@ -53,7 +57,7 @@
         (.preventDefault e)
         (rf/dispatch [:blocks/delete
                       {:uid uid
-                       :!ref (.-current !ref)}]))
+                       :elem el}]))
 
       ("ArrowUp" "ArrowDown")
       (let [{cy1 :y1 cy2 :y2
@@ -70,13 +74,13 @@
           "ArrowUp" (when (< (edge-dist cy1 :y1) thr)
                       (.preventDefault e)
                       (rf/dispatch [:blocks/cross
-                                    {:!ref (.-current !ref)
+                                    {:elem el
                                      :dir :prev
                                      :caret-x cx-corr}]))
           "ArrowDown" (when (< (edge-dist cy2 :y2) thr)
                         (.preventDefault e)
                         (rf/dispatch [:blocks/cross
-                                      {:!ref (.-current !ref)
+                                      {:elem el
                                        :dir :next
                                        :caret-x cx-corr}]))))
 
@@ -84,7 +88,7 @@
     (swap! *state assoc :prev-key k)))
 
 (defn block-key-up
-  [e _ *state !ref open-select-menu]
+  [e _ *state _ open-select-menu]
   (when (= "/" (.-key e)) (open-select-menu)))
 
 (defn block-el
@@ -95,7 +99,6 @@
                         :select-menu-is-open false
                         :select-menu-position {:x nil :y nil}})
         *editing? (rf/subscribe [:editing/is-editing uid]) ;; ? needed?
-        !ref (react/createRef) ;; contentEditable
 
         ;; ! select-menu triggers some weird editing behaviour after close
         close-select-menu
@@ -105,7 +108,9 @@
             :select-menu-is-open false
             :select-menu-position {:x nil :y nil})
           (.removeEventListener js/document "click" f)
-          (r/after-render #(utils/set-caret-to (.. !ref -current) :end)))
+          (r/after-render #(utils/set-caret-to
+                             nil ; ! how to get: (.. !ref -current)
+                             :end)))
 
         open-select-menu
         (fn []
@@ -136,16 +141,15 @@
             {:position select-menu-position
              :on-select tag-selection
              :close close-select-menu}])
-         [:> ContentEditable
+         [editable-el
           {:id (str uid)
            :class (str "Block" (when @*editing? " editing"))
-           :inner-ref !ref
-           :html (if (zero? (count html-local))
-                   utils/zero-width-char html-local) ;; fixes caret position
            :tag-name tag-local
-           :on-blur (fn [e] (block-blur e uid *state !ref))
-           :on-change (fn [e] (block-change e uid *state !ref))
-           :on-key-down (fn [e] (block-keydown e uid *state !ref))
-           :on-key-up (fn [e] (block-key-up e uid *state !ref
-                                open-select-menu))}]]))))
+           :children (if (zero? (count html-local))
+                       utils/zero-width-char html-local)
+           :on-blur (fn [e elem] (block-blur e uid *state elem))
+           :on-change (fn [e elem] (block-change e uid *state elem))
+           :on-key-down (fn [e elem] (block-keydown e uid *state elem))
+           :on-key-up (fn [e elem] (block-key-up e uid *state elem
+                                     open-select-menu))}]]))))
 

@@ -11,21 +11,21 @@
     :id     :get-prev-elem!
     :before (fn [context]
               (let [{:keys [event]} (:coeffects context)
-                    !ref (-> event second :!ref)]
+                    elem (-> event second :elem)]
                 (assoc-in context [:coeffects :prev-elem]
-                          (.. !ref -previousElementSibling))))))
+                          (.. elem -previousElementSibling))))))
 
 (def get-adjacent-elem!
   (rf/->interceptor
     :id     :get-adjacent-elem!
     :before (fn [context]
               (let [{:keys [event]} (:coeffects context)
-                    !ref (-> event second :!ref)
+                    elem (-> event second :elem)
                     dir  (-> event second :dir)]
                 (assoc-in context [:coeffects :adjacent-elem]
                           (case dir
-                            :prev (.. !ref -previousElementSibling)
-                            :next (.. !ref -nextElementSibling)))))))
+                            :prev (.. elem -previousElementSibling)
+                            :next (.. elem -nextElementSibling)))))))
 
 ;; ---- Event handler -------------------------------------------
 
@@ -49,7 +49,7 @@
 
 (rf/reg-event-fx
   :blocks/add
-  (fn [{:keys [db]} [_ {:keys [prev-uid local-data !ref]}]]
+  (fn [{:keys [db]} [_ {:keys [prev-uid local-data elem]}]]
     (let [blocks (:blocks db)
           new-block (merge {:uid (random-uuid) :html "" :tag "p"}
                            local-data)
@@ -58,12 +58,12 @@
       ;;   empty lines are present in multi-line blocks
       {:db (update db :blocks #(into (subvec % 0 i)
                                      (cons new-block (subvec % i))))
-       :focus-next! !ref})))
+       :focus-next! elem})))
 
 (rf/reg-event-fx
   :blocks/delete
   [get-prev-elem!]
-  (fn [{:keys [db prev-elem]} [_ {:keys [uid !ref]}]]
+  (fn [{:keys [db prev-elem]} [_ {:keys [uid elem]}]]
     (let [blocks (:blocks db)]
       (when prev-elem
         (let [i (.indexOf (mapv :uid blocks) uid)
@@ -72,7 +72,7 @@
                           (.. prev-elem -innerHTML))
               prev-html-merged (str prev-html
                                     (utils/remove-zero-width-char
-                                      (.. !ref -innerHTML)))]
+                                      (.. elem -innerHTML)))]
           {:db (update db :blocks #(into (subvec % 0 i)
                                          (subvec % (inc i))))
            ;; ! there is some weird joining behaviour if

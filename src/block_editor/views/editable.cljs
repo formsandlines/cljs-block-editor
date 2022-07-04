@@ -6,35 +6,35 @@
 
 
 (defn editable-input
-  [e handler]
-  ;; TODO
-  (handler e))
+  [e !ref handler]
+  (handler e (when-let [r @!ref] r)))
 
 (defn editable-blur
-  [e handler]
-  ;; TODO
-  (handler e))
+  [e !ref handler]
+  (handler e (when-let [r @!ref] r)))
 
 (defn editable-keyup
-  [e handler]
-  ;; TODO
-  (handler e))
+  [e !ref handler]
+  (handler e (when-let [r @!ref] r)))
 
 (defn editable-keydown
-  [e handler]
-  ;; TODO
-  (handler e))
+  [e !ref handler]
+  (handler e (when-let [r @!ref] r)))
 
 (defn editable-el
-  [{:keys [id classname tag-name children
+  [{:keys [id class tag-name children disabled
            on-blur on-change on-key-down on-key-up]}]
-  (let [] ;; state?
+  (let [!ref (atom nil)]
     [(or tag-name :div)
-     {:class classname
+     {:class class
       :id id
-      :onInput (fn [e] (editable-input e on-change))
-      :onBlur (fn [e] (editable-blur e on-blur))
-      :onKeyUp (fn [e] (editable-keyup e on-key-up))
-      :onKeyDown (fn [e] (editable-keydown e on-key-down))}
+      :contentEditable (not disabled)
+      :suppressContentEditableWarning true
+      :ref (fn [el] (reset! !ref el))
+      :onInput (fn [e] (editable-input e !ref on-change))
+      :onBlur (fn [e] (editable-blur e !ref on-blur))
+      :onKeyUp (fn [e] (editable-keyup e !ref on-key-up))
+      :onKeyDown (fn [e] (editable-keydown e !ref on-key-down))
+      }
      children]))
 
