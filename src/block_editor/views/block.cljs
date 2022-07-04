@@ -1,11 +1,11 @@
-(ns block-editor.views
+(ns block-editor.views.block
   (:require
     [reagent.core :as r]
     [re-frame.core :as rf]
     [react :as react]
     [block-editor.utils :as utils]
     ["react-contenteditable$default" :as ContentEditable]
-    [block-editor.select-menu :refer [select-menu-el]]))
+    [block-editor.views.select-menu :refer [select-menu-el]]))
 
 
 (defn block-blur
@@ -148,26 +148,4 @@
            :on-key-down (fn [e] (block-keydown e uid *state !ref))
            :on-key-up (fn [e] (block-key-up e uid *state !ref
                                 open-select-menu))}]]))))
-
-
-(defn block-page-el []
-  (let [*blocks (rf/subscribe [:blocks])]
-    (fn []
-      [:div.Page
-       (for [{:keys [uid html tag]} @*blocks]
-         ^{:key uid}
-         [block-el
-          {:uid uid
-           :tag tag
-           :html html}])])))
-
-
-(defn root-el []
-  [:<>
-   [:h1.Logo
-    "Block-based RTE"]
-   [:p.Intro
-    [:span.Code "/"]
-    " to see available elements."]
-   [block-page-el]])
 

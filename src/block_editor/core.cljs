@@ -5,8 +5,16 @@
     [block-editor.events :as events]
     [block-editor.subs :as subs]
     [block-editor.effects :as effects]
-    [block-editor.views :refer [root-el]]))
+    [block-editor.views.block-page :refer [block-page-el]]))
 
+(defn root-el []
+  [:<>
+   [:h1.Logo
+    "Block-based RTE"]
+   [:p.Intro
+    [:span.Code "/"]
+    " to see available elements."]
+   [block-page-el]])
 
 (defn ^:dev/after-load mount-root []
   (rf/clear-subscription-cache!)

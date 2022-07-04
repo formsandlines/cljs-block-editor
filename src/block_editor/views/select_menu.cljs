@@ -1,4 +1,4 @@
-(ns block-editor.select-menu
+(ns block-editor.views.select-menu
   (:require 
     [reagent.core :as r]
     ["match-sorter" :refer (matchSorter)]))
